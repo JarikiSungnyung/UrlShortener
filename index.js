@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const mysql = require("mysql2");
 let nanoid;
@@ -5,20 +7,20 @@ import("nanoid").then((nano) => {
   nanoid = nano.nanoid;
 });
 
-const app = express();
-app.use(express.json());
-
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "!dmsgur0327",
-  database: "urlshortener",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 db.connect((err) => {
   if (err) throw err;
-  console.log("Connected to database");
+  console.log("Connected to the database.");
 });
+
+const app = express();
+app.use(express.json());
 
 app.post("/shorten", async (req, res) => {
   const { url } = req.body;
@@ -27,7 +29,7 @@ app.post("/shorten", async (req, res) => {
 
   db.query(query, [id, url], (err, result) => {
     if (err) throw err;
-    res.json({ short_url: `http://localhost:3000/${id}` });
+    res.json({ short_url: `${process.env.DOMAIN}/${id}` });
   });
 });
 
@@ -46,5 +48,5 @@ app.get("/:id", (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("Server started on port 3000");
+  console.log("Server is running on port 3000.");
 });
