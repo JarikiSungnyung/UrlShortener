@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const mysql = require("mysql2");
+const schedule = require("node-schedule");
 let nanoid;
 import("nanoid").then((nano) => {
   nanoid = nano.nanoid;
@@ -29,6 +30,15 @@ app.post("/shorten", async (req, res) => {
 
   db.query(query, [id, url], (err, result) => {
     if (err) throw err;
+
+    const deleteJob = schedule.scheduleJob(Date.now() + 24 * 60 * 60 * 1000, () => {
+      const deleteQuery = "DELETE FROM urls WHERE id = ?";
+      db.query(deleteQuery, id, (err, result) => {
+        if (err) throw err;
+        console.log(`Deleted ${id} from the database.`);
+      });
+    });
+
     res.json({ short_url: `${process.env.DOMAIN}/${id}` });
   });
 });
