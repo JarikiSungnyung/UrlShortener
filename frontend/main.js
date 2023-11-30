@@ -12,6 +12,7 @@ document.getElementById("url-form").addEventListener("submit", async function (e
   document.getElementById("result").textContent = `Short URL: ${data.short_url}`;
   document.getElementById("copy-button").style.display = "block";
   document.getElementById("copy-button").dataset.clipboardText = data.short_url;
+  document.getElementById("warning").style.display = "block";
 });
 
 document.getElementById("copy-button").addEventListener("click", function () {
