@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
 const schedule = require("node-schedule");
+const cors = require("cors");
 let nanoid;
 import("nanoid").then((nano) => {
   nanoid = nano.nanoid;
@@ -21,6 +22,7 @@ db.connect((err) => {
 });
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.post("/shorten", async (req, res) => {
